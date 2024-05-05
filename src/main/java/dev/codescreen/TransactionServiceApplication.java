@@ -16,6 +16,19 @@ public class TransactionServiceApplication {
         SpringApplication.run(TransactionServiceApplication.class, args);
     }
 
+    // New endpoint to handle the ping request
+    @GetMapping("/ping")
+    public ResponseEntity<?> ping() {
+        try {
+            // Simulate success by returning a success response with the current server time
+            String message = "Pong! Server time is: " + java.time.LocalDateTime.now();
+            return ResponseEntity.ok().body(message);
+        } catch (Exception e) {
+            // If an exception occurs, return a server error response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
+    }
+
     // Endpoint to handle the load request
     @PutMapping("/load")
     public ResponseEntity<LoadResponse> load(@RequestBody LoadRequest loadRequest) {
