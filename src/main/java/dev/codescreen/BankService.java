@@ -2,11 +2,11 @@ package dev.codescreen;
 
 
 public class BankService {
-    private final EventStore eventStore = new EventStore();
+    private final transactionStore transactionStore = new transactionStore();
 
-    public BankAccount createAccount(String accountId) {
-        return new BankAccount(accountId, eventStore);
+    public accountCreation createAccount(String accountId) {
+        return new accountCreation(accountId, transactionStore);
     }
 
-    // Other methods to interact with BankAccount objects
+    // Other methods to interact with accountCreation objects
 }

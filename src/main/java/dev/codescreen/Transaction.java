@@ -2,13 +2,13 @@ package dev.codescreen;
 
 import java.time.LocalDateTime;
 
-public class Event {
+public class Transaction {
     private final String accountId;
     private final double amount;
     private final LocalDateTime timestamp;
     private final String type; // "LOAD" or "AUTHORIZATION"
 
-    public Event(String accountId, double amount, LocalDateTime timestamp, String type) {
+    public Transaction(String accountId, double amount, LocalDateTime timestamp, String type) {
         this.accountId = accountId;
         this.amount = amount;
         this.timestamp = timestamp;

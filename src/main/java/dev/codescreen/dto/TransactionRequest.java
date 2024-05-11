@@ -6,5 +6,5 @@ import lombok.Data;
 public class TransactionRequest {
     private String userId;
     private String messageId;
-    private AmountDetails transactionAmount;
+    private balance transactionAmount;
 }

@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BankLedgerSystemApp {
+public class bankledgersystemapp {
     public static void main(String[] args) {
-        SpringApplication.run(BankLedgerSystemApp.class, args);
+        SpringApplication.run(bankledgersystemapp.class, args);
     }
 }

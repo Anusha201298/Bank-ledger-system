@@ -16,7 +16,7 @@ class BankServiceTest {
 
     @Test
     public void loadTransactions() {
-        BankAccount account1 = bankService.createAccount("1");
+        accountCreation account1 = bankService.createAccount("1");
         double balance;
 
         // Test Load Transaction 1
@@ -30,7 +30,7 @@ class BankServiceTest {
 
     @Test
     public void authorizeTransactions() {
-        BankAccount account1 = bankService.createAccount("1");
+        accountCreation account1 = bankService.createAccount("1");
         double balance;
 
         // Initial deposit to set the balance
@@ -47,7 +47,7 @@ class BankServiceTest {
 
     @Test
     public void authorizeZeroaccount() {
-        BankAccount account2 = bankService.createAccount("2");
+        accountCreation account2 = bankService.createAccount("2");
         double balance;
 
         // Test Authorization on a new account with no initial deposit (Denied)
@@ -57,7 +57,7 @@ class BankServiceTest {
 
     @Test
     public void allTransactions() {
-        BankAccount account3 = bankService.createAccount("3");
+        accountCreation account3 = bankService.createAccount("3");
         double balance;
 
         // Test Load for Account 3
@@ -65,13 +65,69 @@ class BankServiceTest {
         assertEquals(50.01, balance, 0.01);
 
         // Test Authorization (Denied since no money in account 2)
-        BankAccount account2 = bankService.createAccount("2");
+        accountCreation account2 = bankService.createAccount("2");
         balance = account2.withdraw(50.01);
         assertEquals(0.00, balance, 0.01); // Balance should remain zero
 
         // If Account 2 had money
         account2.deposit(50.01);
         balance = account2.withdraw(50.01);
+        assertEquals(0.00, balance, 0.01); // Balance should go to zero after withdrawal
+    }
+
+    @Test
+    void loadTransactionFirst() {
+        accountCreation account4 = bankService.createAccount("1");
+        double balance = account4.deposit(100.00);
+        assertEquals(100.00, balance, 0.01);
+    }
+
+    @Test
+    void loadTransactionSecond() {
+        accountCreation account = bankService.createAccount("1");
+        assertNotNull(account); // Account must exist
+        double balance = account.deposit(3.23);
+        assertEquals(3.23, balance, 0.01);
+    }
+
+    @Test
+    void authorizationTransactionValid() {
+        accountCreation account = bankService.createAccount("1");
+        double balance = account.withdraw(100.00);
+        assertEquals(0.0, balance, 0.01);
+    }
+
+    @Test
+    void authorizationTransactionDenied() {
+        accountCreation account = bankService.createAccount("1");
+        double balance = account.withdraw(10.00);
+        assertEquals(0.0, balance, 0.01); // Balance should not change
+    }
+
+    @Test
+    void authorizationTransactionOnZeroBalanceAccount() {
+        accountCreation account = bankService.createAccount("2");
+        double balance = account.withdraw(50.01);
+        assertEquals(0.00, balance, 0.01); // Balance should remain zero
+    }
+
+    @Test
+    void loadTransactionOnNewAccount() {
+        accountCreation account = bankService.createAccount("3");
+        double balance = account.deposit(50.01);
+        assertEquals(50.01, balance, 0.01);
+    }
+
+    @Test
+    void authorizationTransactionOnAnotherAccount() {
+        accountCreation account2 = bankService.createAccount("2");
+        accountCreation account3 = bankService.createAccount("3");
+
+        assertNotNull(account2);
+        assertNotNull(account3);
+
+        account2.deposit(50.01);
+        double balance = account2.withdraw(50.01);
         assertEquals(0.00, balance, 0.01); // Balance should go to zero after withdrawal
     }
 }

@@ -1,6 +1,6 @@
 package dev.codescreen.controller;
 
-import dev.codescreen.dto.AmountDetails;
+import dev.codescreen.dto.balance;
 import dev.codescreen.dto.TransactionRequest;
 import dev.codescreen.dto.TransactionResponse;
 import org.springframework.http.HttpStatus;
@@ -18,16 +18,30 @@ public class TransactionController {
 
     private static Map<String, Double> bankVault = new HashMap<>();
 
+
+    // New endpoint to handle the ping request
+    @GetMapping("/ping")
+    public ResponseEntity<?> ping() {
+        try {
+            // Simulate success by returning a success response with the current server time
+            String message = "Pong! Server time is: " + java.time.LocalDateTime.now();
+            return ResponseEntity.ok().body(message);
+        } catch (Exception e) {
+            // If an exception occurs, return a server error response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
+    }
+
     @PutMapping("/load")
     public ResponseEntity<TransactionResponse> depositRequest(@RequestBody TransactionRequest transactionRequest) {
-        AmountDetails amountDetails = transactionRequest.getTransactionAmount();
-        if (amountDetails.getDebitOrCredit().equals("CREDIT")) {
+        balance balance = transactionRequest.getTransactionAmount();
+        if (balance.getDebitOrCredit().equals("CREDIT")) {
             // verify if user not exists
             if (!validateUserExistsInBankVault(transactionRequest.getUserId())) {
-                addOrUpdateUserToBankVault(transactionRequest.getUserId(), amountDetails.getAmount());
+                addOrUpdateUserToBankVault(transactionRequest.getUserId(), balance.getAmount());
             } else {
                 Double currentBal = fetchUserBalFromBankVault(transactionRequest.getUserId());
-                addOrUpdateUserToBankVault(transactionRequest.getUserId(), currentBal + amountDetails.getAmount());
+                addOrUpdateUserToBankVault(transactionRequest.getUserId(), currentBal + balance.getAmount());
             }
         } else {
             throw new UnsupportedOperationException("DEBIT!! Request is not Allowed, Please re-check");
@@ -39,16 +53,16 @@ public class TransactionController {
 
     @PutMapping("/authorization")
     public ResponseEntity<TransactionResponse> withdrawRequest(@RequestBody TransactionRequest transactionRequest) {
-        AmountDetails amountDetails = transactionRequest.getTransactionAmount();
+        balance balance = transactionRequest.getTransactionAmount();
         // verify if user not exists
         if (!validateUserExistsInBankVault(transactionRequest.getUserId())) {
             throw new UnsupportedOperationException("User not found!! Please load the user");
         }
 
-        if (amountDetails.getDebitOrCredit().equals("DEBIT")) {
+        if (balance.getDebitOrCredit().equals("DEBIT")) {
             Double currentBal = fetchUserBalFromBankVault(transactionRequest.getUserId());
-            if (currentBal >= amountDetails.getAmount()) {
-                addOrUpdateUserToBankVault(transactionRequest.getUserId(), currentBal - amountDetails.getAmount());
+            if (currentBal >= balance.getAmount()) {
+                addOrUpdateUserToBankVault(transactionRequest.getUserId(), currentBal - balance.getAmount());
             } else {
                 TransactionResponse transactionResponse = createTransactionResponse(transactionRequest);
                 transactionResponse.setResponseCode("DECLINED");
